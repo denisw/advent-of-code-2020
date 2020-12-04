@@ -2,22 +2,22 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]))
 
-(def tree-map
+(def tree-grid
   (->> (io/resource "day3/input.txt")
        (slurp)
        (str/split-lines)
        (map (partial into []))
        (into [])))
 
-(def num-rows (count tree-map))
+(def num-rows (count tree-grid))
 (def last-row (- num-rows 1))
-(def num-cols-per-cycle (count (first tree-map)))
+(def num-cols-per-cycle (count (first tree-grid)))
 
 (defn tree? [[row col]]
   (let [col-in-cycle (mod col num-cols-per-cycle)]
-    (= \# (get-in tree-map [row col-in-cycle]))))
+    (= \# (get-in tree-grid [row col-in-cycle]))))
 
-(defn done? [[row col]]
+(defn arrived? [[row col]]
   (> row last-row))
 
 (defn slope [right down]
@@ -25,7 +25,7 @@
 
 (defn num-trees-for-slope [right down]
   (->> (iterate (slope right down) [0 0])
-       (take-while (complement done?))
+       (take-while (complement arrived?))
        (filter tree?)
        (count)))
 
@@ -40,5 +40,5 @@
      (num-trees-for-slope 1 2)))
 
 (defn -main []
-  (print result-1)
-  (print result-2))
+  (println result-1)
+  (println result-2))
